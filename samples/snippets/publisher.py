@@ -31,7 +31,8 @@ def list_topics(project_id: str) -> None:
     from google.cloud import pubsub_v1
 
     # TODO(developer)
-    # project_id = "your-project-id"
+    project_id = "cuidtech-local"
+    topic_id = "activity_detected"
 
     publisher = pubsub_v1.PublisherClient()
     project_path = f"projects/{project_id}"
