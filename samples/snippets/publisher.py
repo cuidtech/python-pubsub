@@ -22,6 +22,7 @@ at https://cloud.google.com/pubsub/docs.
 """
 
 import argparse
+import json
 
 
 def list_topics(project_id: str) -> None:
@@ -93,13 +94,41 @@ def publish_messages(project_id: str, topic_id: str) -> None:
     # in the form `projects/{project_id}/topics/{topic_id}`
     topic_path = publisher.topic_path(project_id, topic_id)
 
+    # for n in range(1, 10):
+    #     data_str = f"Message number {n}"
+    #     # Data must be a bytestring
+    #     data = data_str.encode("utf-8")
+    #     # When you publish a message, the client returns a future.
+    #     future = publisher.publish(topic_path, data)
+    #     print(future.result())
+
     for n in range(1, 10):
-        data_str = f"Message number {n}"
-        # Data must be a bytestring
-        data = data_str.encode("utf-8")
+        # Create a message payload that adheres to your activityDetectedEvent schema
+        message_payload = {
+            "event_id": str(n),  # Replace with a unique event ID
+            "device_adapter_type": "adapter_type",
+            "device_adapter_id": "adapter_id",
+            "device_id": "device_id_123",
+            "reason_type": "activity_detected",
+            "registered_objects": [
+                {
+                    "entity": "object_1",
+                    "attributes": ["attr_1", "attr_2"]
+                },
+                {
+                    "entity": "object_2",
+                    "attributes": ["attr_3", "attr_4"]
+                }
+            ]
+        }
+
+        # Serialize the message payload to JSON
+        message_data = json.dumps(message_payload).encode("utf-8")
+
         # When you publish a message, the client returns a future.
-        future = publisher.publish(topic_path, data)
+        future = publisher.publish(topic_path, data=message_data)
         print(future.result())
+
 
     print(f"Published messages to {topic_path}.")
     # [END pubsub_quickstart_publisher]
